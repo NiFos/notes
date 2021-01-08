@@ -1,19 +1,26 @@
 import { ThunkAction } from "redux-thunk";
+import { currentUser, loginUser, registerUser } from "../../lib/firebase";
 import { RootState } from "../store";
 
 export const authReducerTypes = {
   isLoggedIn: "auth/IS_LOGGED_IN",
   isLoggedInStatus: "auth/IS_LOGGED_IN_STATUS",
+  setUser: "auth/SET_USER",
+  authStatus: "auth/AUTH_STATUS",
 };
 
 export interface IAuthReducer {
   isLoggedIn: boolean;
   isLoggedInStatus: "none" | "loading" | "loaded" | "error";
+  user: string;
+  authStatus: "none" | "loading" | "loaded" | "error";
 }
 
 const initialState: IAuthReducer = {
   isLoggedIn: false,
   isLoggedInStatus: "none",
+  user: "",
+  authStatus: "none",
 };
 
 export const authReducer = (
@@ -32,6 +39,20 @@ export const authReducer = (
       return {
         ...state,
         isLoggedInStatus: payload as IAuthReducer["isLoggedInStatus"],
+      };
+    }
+
+    case authReducerTypes.setUser: {
+      return {
+        ...state,
+        user: payload as IAuthReducer["user"],
+      };
+    }
+
+    case authReducerTypes.authStatus: {
+      return {
+        ...state,
+        authStatus: payload as IAuthReducer["authStatus"],
       };
     }
 
@@ -56,14 +77,16 @@ export const isLoggedIn = (): ThunkAction<
   AuthAction
 > => async (dispatch) => {
   try {
-    // TODO: Auth
+    const response = currentUser();
+
+    // TODO: Auth current user
     dispatch({
       type: authReducerTypes.isLoggedInStatus,
       payload: "loaded",
     });
     dispatch({
       type: authReducerTypes.isLoggedIn,
-      payload: false,
+      payload: !!response,
     });
   } catch (error) {
     dispatch({
@@ -77,4 +100,50 @@ export const isLoggedIn = (): ThunkAction<
   }
 };
 
-export type AuthAction = IsLoggedInAction | IsLoggedInStatus;
+interface AuthStatusAction {
+  type: typeof authReducerTypes.authStatus;
+  payload: IAuthReducer["authStatus"];
+}
+
+interface UserAuthAction {
+  type: typeof authReducerTypes.setUser;
+  payload: IAuthReducer["user"];
+}
+export const auth = (
+  email: string,
+  password: string,
+  isReg: boolean
+): ThunkAction<void, RootState, unknown, AuthAction> => async (dispatch) => {
+  try {
+    let user: string = "";
+    if (isReg) {
+      user = await registerUser(email, password);
+    } else {
+      user = await loginUser(email, password);
+    }
+
+    dispatch({
+      type: authReducerTypes.authStatus,
+      payload: "loaded",
+    });
+    dispatch({
+      type: authReducerTypes.setUser,
+      payload: user,
+    });
+  } catch (error) {
+    dispatch({
+      type: authReducerTypes.authStatus,
+      payload: "error",
+    });
+    dispatch({
+      type: authReducerTypes.setUser,
+      payload: "",
+    });
+  }
+};
+
+export type AuthAction =
+  | IsLoggedInAction
+  | IsLoggedInStatus
+  | AuthStatusAction
+  | UserAuthAction;
