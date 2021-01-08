@@ -1,4 +1,6 @@
 import firebase from "firebase";
+import { NoteData } from "../components/modals/note-modal";
+import { INote } from "../components/notes";
 
 const config = {
   apiKey: process.env.REACT_APP_API_KEY,
@@ -20,7 +22,7 @@ export async function registerUser(
     const response = await firebase
       .auth()
       .createUserWithEmailAndPassword(email, password);
-    return response.user?.email || "";
+    return response.user?.uid || "";
   } catch (error) {
     return "";
   }
@@ -34,9 +36,92 @@ export async function loginUser(
     const response = await firebase
       .auth()
       .signInWithEmailAndPassword(email, password);
-    return response.user?.email || "";
+    return response.user?.uid || "";
   } catch (error) {
     return "";
+  }
+}
+
+export async function createNote(
+  userId: string,
+  noteData: NoteData
+): Promise<string> {
+  try {
+    const data = {
+      ...noteData,
+      createdOn: Date.now(),
+    };
+    const response = await firebase
+      .firestore()
+      .collection("notes")
+      .doc(userId)
+      .collection("userNotes")
+      .add(data);
+    return response.id;
+  } catch (error) {
+    return "";
+  }
+}
+
+export async function deleteNote(
+  userId: string,
+  noteId: string
+): Promise<string> {
+  try {
+    await firebase
+      .firestore()
+      .collection("notes")
+      .doc(userId)
+      .collection("userNotes")
+      .doc(noteId)
+      .delete();
+    return noteId;
+  } catch (error) {
+    return "";
+  }
+}
+
+export async function editNote(
+  userId: string,
+  noteId: string,
+  noteData: NoteData
+): Promise<string> {
+  try {
+    await firebase
+      .firestore()
+      .collection("notes")
+      .doc(userId)
+      .collection("userNotes")
+      .doc(noteId)
+      .update({
+        title: noteData.title,
+        text: noteData.text,
+      });
+    return noteId;
+  } catch (error) {
+    return "";
+  }
+}
+
+export async function getUserNotes(userId: string): Promise<INote[]> {
+  try {
+    const response = await firebase
+      .firestore()
+      .collection("notes")
+      .doc(userId)
+      .collection("userNotes")
+      .get();
+    return response.docs.map((item) => {
+      const itemData = item.data();
+      return {
+        title: itemData.title,
+        createdOn: itemData.createdOn,
+        id: item.id,
+        text: itemData.text,
+      };
+    });
+  } catch (error) {
+    return [];
   }
 }
 

@@ -130,6 +130,10 @@ export const auth = (
       type: authReducerTypes.setUser,
       payload: user,
     });
+    dispatch({
+      type: authReducerTypes.isLoggedIn,
+      payload: true,
+    });
   } catch (error) {
     dispatch({
       type: authReducerTypes.authStatus,

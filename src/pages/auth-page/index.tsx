@@ -1,3 +1,4 @@
+import { Button, Checkbox, Input } from "@material-ui/core";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { minLength, validateEmail } from "../../lib/validation";
@@ -37,7 +38,9 @@ export function Auth(props: Props) {
   const [isReg, setIsReg] = React.useState(false);
   const [formState, setFormState] = React.useState<IFormData>(formData);
 
-  function changeHandler(e: React.ChangeEvent<HTMLInputElement>) {
+  function changeHandler(
+    e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>
+  ) {
     const valid =
       e.target.name === "email"
         ? validateEmail(e.target.value)
@@ -60,16 +63,11 @@ export function Auth(props: Props) {
     <div>
       <div>
         <label htmlFor="isReg">I want to register</label>
-        <input
-          id="isReg"
-          type="checkbox"
-          checked={isReg}
-          onChange={() => setIsReg(!isReg)}
-        />
+        <Checkbox id="isReg" value={isReg} onChange={() => setIsReg(!isReg)} />
       </div>
       <div>
         <label htmlFor="email">Email</label>
-        <input
+        <Input
           id="email"
           name="email"
           value={formState.email.value}
@@ -78,7 +76,7 @@ export function Auth(props: Props) {
       </div>
       <div>
         <label htmlFor="password">Password</label>
-        <input
+        <Input
           type="password"
           id="password"
           name="password"
@@ -86,9 +84,13 @@ export function Auth(props: Props) {
           onChange={(e) => changeHandler(e)}
         />
       </div>
-      <button disabled={state.authStatus === "loading"} onClick={submitHandler}>
+      <Button
+        variant="contained"
+        disabled={state.authStatus === "loading"}
+        onClick={submitHandler}
+      >
         {isReg ? "Register" : "Login"}
-      </button>
+      </Button>
     </div>
   );
 }

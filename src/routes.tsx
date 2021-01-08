@@ -11,9 +11,7 @@ export function Routes(props: Props) {
   const state = useSelector((state: RootState) => state.auth);
   return (
     <Switch>
-      <Route path="/">
-        {state.isLoggedIn || state.user ? <Home /> : <Auth />}
-      </Route>
+      <Route path="/">{state.isLoggedIn ? <Home /> : <Auth />}</Route>
     </Switch>
   );
 }
