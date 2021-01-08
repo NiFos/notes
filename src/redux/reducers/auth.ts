@@ -27,6 +27,14 @@ export const authReducer = (
         isLoggedIn: payload as IAuthReducer["isLoggedIn"],
       };
     }
+
+    case authReducerTypes.isLoggedInStatus: {
+      return {
+        ...state,
+        isLoggedInStatus: payload as IAuthReducer["isLoggedInStatus"],
+      };
+    }
+
     default: {
       return state;
     }
@@ -49,6 +57,14 @@ export const isLoggedIn = (): ThunkAction<
 > => async (dispatch) => {
   try {
     // TODO: Auth
+    dispatch({
+      type: authReducerTypes.isLoggedInStatus,
+      payload: "loaded",
+    });
+    dispatch({
+      type: authReducerTypes.isLoggedIn,
+      payload: false,
+    });
   } catch (error) {
     dispatch({
       type: authReducerTypes.isLoggedInStatus,
