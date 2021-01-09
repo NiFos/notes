@@ -1,4 +1,4 @@
-import { Button, Typography } from "@material-ui/core";
+import { Button, makeStyles, Typography } from "@material-ui/core";
 import moment from "moment";
 import React from "react";
 
@@ -16,16 +16,31 @@ interface Props {
   deleteLoadingStatus: boolean;
 }
 
+const useStyles = makeStyles((theme) => ({
+  note: {
+    marginBottom: theme.spacing(2),
+  },
+}));
+
 export function Notes(props: Props) {
+  const classes = useStyles();
+
   function renderNotes() {
     return props.notes.map((note) => {
       return (
-        <li key={note.id}>
+        <div key={note.id} className={classes.note}>
           <div>
             <Typography variant="subtitle2">{note.title}</Typography>
             <Typography variant="body1">{note.text}</Typography>
-            <Button onClick={() => props.editHandler(note.id)}>Edit</Button>
             <Button
+              color="primary"
+              variant="contained"
+              onClick={() => props.editHandler(note.id)}
+            >
+              Edit
+            </Button>
+            <Button
+              variant="text"
               onClick={() => props.deleteHandler(note.id)}
               disabled={props.deleteLoadingStatus}
             >
@@ -35,7 +50,7 @@ export function Notes(props: Props) {
               {moment(note.createdOn).fromNow()}
             </Typography>
           </div>
-        </li>
+        </div>
       );
     });
   }

@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { Button, CircularProgress } from "@material-ui/core";
+import { Button, CircularProgress, makeStyles } from "@material-ui/core";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { NoteData, NoteModal } from "../../components/modals/note-modal";
@@ -14,6 +14,13 @@ import {
 } from "../../redux/reducers/notes";
 import { RootState } from "../../redux/store";
 
+const useStyles = makeStyles((theme) => ({
+  header: {
+    marginTop: theme.spacing(1),
+    marginBottom: theme.spacing(2),
+  },
+}));
+
 interface Props {}
 
 export function Home(props: Props) {
@@ -21,6 +28,7 @@ export function Home(props: Props) {
   const state = useSelector((state: RootState) => state.notes);
   const dispatch = useDispatch();
   const [openNewNote, setOpenNewNote] = React.useState(false);
+  const classes = useStyles();
 
   React.useEffect(() => {
     dispatch(getNotes(userState.user));
@@ -63,10 +71,18 @@ export function Home(props: Props) {
           }
         />
       )}
-      <Button onClick={() => setOpenNewNote(!openNewNote)}>New note</Button>
-      <Button onClick={() => dispatch(changeSorting(!state.sortingAsc))}>
-        Sorting: {state.sortingAsc ? "ascending" : "descending"}
-      </Button>
+      <div className={classes.header}>
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={() => setOpenNewNote(!openNewNote)}
+        >
+          New note
+        </Button>
+        <Button onClick={() => dispatch(changeSorting(!state.sortingAsc))}>
+          Sorting: {state.sortingAsc ? "ascending" : "descending"}
+        </Button>
+      </div>
       {state.notesStatus === "loaded" ? (
         <Notes
           notes={state.notes}

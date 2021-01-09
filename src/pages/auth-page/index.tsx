@@ -85,6 +85,7 @@ export function Auth(props: Props) {
         />
       </div>
       <Button
+        color="primary"
         variant="contained"
         disabled={state.authStatus === "loading"}
         onClick={submitHandler}

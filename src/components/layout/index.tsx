@@ -1,8 +1,9 @@
-import { CircularProgress } from "@material-ui/core";
+import { CircularProgress, ThemeProvider } from "@material-ui/core";
 /* eslint-disable react-hooks/exhaustive-deps */
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { BrowserRouter } from "react-router-dom";
+import { theme } from "../../lib/theme";
 import { isLoggedIn } from "../../redux/reducers/auth";
 import { RootState } from "../../redux/store";
 
@@ -19,16 +20,18 @@ export function Layout(props: Props) {
   }, []);
 
   return (
-    <BrowserRouter>
-      {state === "loaded" ? (
-        props.children
-      ) : state === "loading" ? (
-        <CircularProgress />
-      ) : state === "error" ? (
-        <div>Something went wrong</div>
-      ) : (
-        <React.Fragment></React.Fragment>
-      )}
-    </BrowserRouter>
+    <ThemeProvider theme={theme}>
+      <BrowserRouter>
+        {state === "loaded" ? (
+          props.children
+        ) : state === "loading" ? (
+          <CircularProgress />
+        ) : state === "error" ? (
+          <div>Something went wrong</div>
+        ) : (
+          <React.Fragment></React.Fragment>
+        )}
+      </BrowserRouter>
+    </ThemeProvider>
   );
 }
