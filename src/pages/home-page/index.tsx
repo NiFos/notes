@@ -1,10 +1,11 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { Button } from "@material-ui/core";
+import { Button, CircularProgress } from "@material-ui/core";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { NoteData, NoteModal } from "../../components/modals/note-modal";
 import { Notes } from "../../components/notes";
 import {
+  changeSorting,
   createUserNote,
   deleteUserNote,
   editUserNote,
@@ -63,12 +64,23 @@ export function Home(props: Props) {
         />
       )}
       <Button onClick={() => setOpenNewNote(!openNewNote)}>New note</Button>
-      <Notes
-        notes={state.notes}
-        editHandler={editHandler}
-        deleteHandler={deleteHandler}
-        deleteLoadingStatus={state.deleteNoteStatus === "loading"}
-      />
+      <Button onClick={() => dispatch(changeSorting(!state.sortingAsc))}>
+        Sorting: {state.sortingAsc ? "ascending" : "descending"}
+      </Button>
+      {state.notesStatus === "loaded" ? (
+        <Notes
+          notes={state.notes}
+          editHandler={editHandler}
+          deleteHandler={deleteHandler}
+          deleteLoadingStatus={state.deleteNoteStatus === "loading"}
+        />
+      ) : state.notesStatus === "loading" ? (
+        <CircularProgress />
+      ) : state.notesStatus === "error" ? (
+        <div>Something went error</div>
+      ) : (
+        <React.Fragment></React.Fragment>
+      )}
     </div>
   );
 }

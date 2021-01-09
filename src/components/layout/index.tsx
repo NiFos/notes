@@ -1,3 +1,4 @@
+import { CircularProgress } from "@material-ui/core";
 /* eslint-disable react-hooks/exhaustive-deps */
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -22,7 +23,7 @@ export function Layout(props: Props) {
       {state === "loaded" ? (
         props.children
       ) : state === "loading" ? (
-        <div>Loading...</div>
+        <CircularProgress />
       ) : state === "error" ? (
         <div>Something went wrong</div>
       ) : (

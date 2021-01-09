@@ -19,12 +19,14 @@ export const notesReducerTypes = {
   editNoteStatus: "notes/EDIT_NOTE_STATUS",
   deleteNote: "notes/DELETE_NOTE",
   deleteNoteStatus: "notes/DELETE_NOTE_STATUS",
+  changeSorting: "notes/CHANGE_SORTING",
 };
 
 export interface INotesReducer {
   notes: INote[];
-  notesStatus: "none" | "loading" | "loaded" | "error";
   currentNote: string;
+  sortingAsc: boolean;
+  notesStatus: "none" | "loading" | "loaded" | "error";
   createNoteStatus: "none" | "loading" | "loaded" | "error";
   deleteNoteStatus: "none" | "loading" | "loaded" | "error";
   editNoteStatus: "none" | "loading" | "loaded" | "error";
@@ -32,8 +34,9 @@ export interface INotesReducer {
 
 const initialState: INotesReducer = {
   notes: [],
-  notesStatus: "none",
   currentNote: "",
+  sortingAsc: false,
+  notesStatus: "none",
   createNoteStatus: "none",
   deleteNoteStatus: "none",
   editNoteStatus: "none",
@@ -117,6 +120,13 @@ export const notesReducer = (
       };
     }
 
+    case notesReducerTypes.changeSorting: {
+      return {
+        ...state,
+        sortingAsc: payload as INotesReducer["sortingAsc"],
+      };
+    }
+
     default: {
       return state;
     }
@@ -132,10 +142,16 @@ interface GetNotesStatusActions {
   payload: INotesReducer["notesStatus"];
 }
 export const getNotes = (
-  userId: string
-): ThunkAction<void, RootState, unknown, NotesAction> => async (dispatch) => {
+  userId: string,
+  asc?: boolean
+): ThunkAction<void, RootState, unknown, NotesAction> => async (
+  dispatch,
+  getState
+) => {
   try {
-    const response = await getUserNotes(userId);
+    const state = getState();
+    const sorting = typeof asc === "boolean" ? asc : state.notes.sortingAsc;
+    const response = await getUserNotes(userId, sorting);
     dispatch({
       type: notesReducerTypes.getNotesStatus,
       payload: "loaded",
@@ -166,6 +182,26 @@ export const setCurrentNote = (noteId: string): SetCurrentNoteAction => {
     type: notesReducerTypes.setCurrentNote,
     payload: noteId,
   };
+};
+
+interface ChangeSortingAction {
+  type: typeof notesReducerTypes.changeSorting;
+  payload: INotesReducer["sortingAsc"];
+}
+
+export const changeSorting = (
+  asc: boolean
+): ThunkAction<void, RootState, unknown, NotesAction> => async (
+  dispatch,
+  getState
+) => {
+  dispatch({
+    type: notesReducerTypes.changeSorting,
+    payload: asc,
+  });
+  const state = getState();
+  const user = state.auth.user;
+  dispatch(getNotes(user, asc));
 };
 
 interface CreateNoteStatusAction {
@@ -298,4 +334,5 @@ export type NotesAction =
   | EditNoteStatusAction
   | EditNoteAction
   | DeleteNoteStatusAction
-  | DeleteNoteAction;
+  | DeleteNoteAction
+  | ChangeSortingAction;

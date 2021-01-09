@@ -103,13 +103,17 @@ export async function editNote(
   }
 }
 
-export async function getUserNotes(userId: string): Promise<INote[]> {
+export async function getUserNotes(
+  userId: string,
+  sorting: boolean
+): Promise<INote[]> {
   try {
     const response = await firebase
       .firestore()
       .collection("notes")
       .doc(userId)
       .collection("userNotes")
+      .orderBy("createdOn", sorting ? "asc" : "desc")
       .get();
     return response.docs.map((item) => {
       const itemData = item.data();
