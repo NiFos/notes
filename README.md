@@ -1,5 +1,9 @@
-<center>Notes app<center>
-<center>Web application for note-taking<center>
+<h3 align="center">
+  Notes app
+</h3>
+<p align="center">
+  Web application for note-taking
+</p>
 
 #### Demo:
   [Here](https://loving-babbage-80fd4c.netlify.app/)
