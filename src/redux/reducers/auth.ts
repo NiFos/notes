@@ -115,6 +115,10 @@ export const auth = (
   isReg: boolean
 ): ThunkAction<void, RootState, unknown, AuthAction> => async (dispatch) => {
   try {
+    dispatch({
+      type: authReducerTypes.authStatus,
+      payload: "loading",
+    });
     let user: string = "";
     if (isReg) {
       user = await registerUser(email, password);

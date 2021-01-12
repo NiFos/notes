@@ -1,4 +1,10 @@
-import { Button, makeStyles, Typography } from "@material-ui/core";
+import {
+  Button,
+  Card,
+  CardContent,
+  makeStyles,
+  Typography,
+} from "@material-ui/core";
 import moment from "moment";
 import React from "react";
 
@@ -20,6 +26,9 @@ const useStyles = makeStyles((theme) => ({
   note: {
     marginBottom: theme.spacing(2),
   },
+  btns: {
+    float: "right",
+  },
 }));
 
 export function Notes(props: Props) {
@@ -28,29 +37,31 @@ export function Notes(props: Props) {
   function renderNotes() {
     return props.notes.map((note) => {
       return (
-        <div key={note.id} className={classes.note}>
-          <div>
+        <Card key={note.id} className={classes.note}>
+          <CardContent>
             <Typography variant="subtitle2">{note.title}</Typography>
             <Typography variant="body1">{note.text}</Typography>
-            <Button
-              color="primary"
-              variant="contained"
-              onClick={() => props.editHandler(note.id)}
-            >
-              Edit
-            </Button>
-            <Button
-              variant="text"
-              onClick={() => props.deleteHandler(note.id)}
-              disabled={props.deleteLoadingStatus}
-            >
-              Delete
-            </Button>
-            <Typography variant="subtitle2">
-              {moment(note.createdOn).fromNow()}
-            </Typography>
-          </div>
-        </div>
+            <div className={classes.btns}>
+              <Button
+                color="primary"
+                variant="contained"
+                onClick={() => props.editHandler(note.id)}
+              >
+                Edit
+              </Button>
+              <Button
+                variant="text"
+                onClick={() => props.deleteHandler(note.id)}
+                disabled={props.deleteLoadingStatus}
+              >
+                Delete
+              </Button>
+              <Typography variant="subtitle2">
+                {moment(note.createdOn).fromNow()}
+              </Typography>
+            </div>
+          </CardContent>
+        </Card>
       );
     });
   }

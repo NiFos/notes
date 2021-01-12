@@ -1,9 +1,21 @@
-import { Button, Checkbox, Input } from "@material-ui/core";
+import { Button, Checkbox, Input, makeStyles } from "@material-ui/core";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { minLength, validateEmail } from "../../lib/validation";
 import { auth } from "../../redux/reducers/auth";
 import { RootState } from "../../redux/store";
+
+const useStyles = makeStyles((theme) => ({
+  root: {
+    textAlign: "center",
+  },
+  label: {
+    marginRight: theme.spacing(1),
+  },
+  btn: {
+    marginTop: theme.spacing(1),
+  },
+}));
 
 interface Props {}
 
@@ -33,6 +45,7 @@ const formData: IFormData = {
 };
 
 export function Auth(props: Props) {
+  const classes = useStyles();
   const dispatch = useDispatch();
   const state = useSelector((state: RootState) => state.auth);
   const [isReg, setIsReg] = React.useState(false);
@@ -60,13 +73,15 @@ export function Auth(props: Props) {
   }
 
   return (
-    <div>
+    <div className={classes.root}>
       <div>
         <label htmlFor="isReg">I want to register</label>
         <Checkbox id="isReg" value={isReg} onChange={() => setIsReg(!isReg)} />
       </div>
       <div>
-        <label htmlFor="email">Email</label>
+        <label className={classes.label} htmlFor="email">
+          Email
+        </label>
         <Input
           id="email"
           name="email"
@@ -75,7 +90,9 @@ export function Auth(props: Props) {
         />
       </div>
       <div>
-        <label htmlFor="password">Password</label>
+        <label className={classes.label} htmlFor="password">
+          Password
+        </label>
         <Input
           type="password"
           id="password"
@@ -85,6 +102,7 @@ export function Auth(props: Props) {
         />
       </div>
       <Button
+        className={classes.btn}
         color="primary"
         variant="contained"
         disabled={state.authStatus === "loading"}

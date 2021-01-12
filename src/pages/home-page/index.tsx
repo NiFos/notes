@@ -18,6 +18,9 @@ const useStyles = makeStyles((theme) => ({
   header: {
     marginTop: theme.spacing(1),
     marginBottom: theme.spacing(2),
+    "& > *": {
+      marginRight: theme.spacing(1),
+    },
   },
 }));
 
